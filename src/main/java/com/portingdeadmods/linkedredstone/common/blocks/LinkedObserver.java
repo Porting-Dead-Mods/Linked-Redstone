@@ -8,6 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ObserverBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -17,27 +18,28 @@ public class LinkedObserver extends ObserverBlock implements ILinkable {
     }
 
     @Override
-    public void tick(BlockState blockState, ServerLevel level, BlockPos pos, RandomSource randomSource) {
-        if (Objects.requireNonNull(level.getBlockEntity(pos)).serializeNBT().getLong("selectedBlock") != 0) {
-            if ((Boolean) blockState.getValue(POWERED)) {
-                level.setBlock(getLinkedBlock(pos, level), (BlockState) blockState.setValue(POWERED, false), 2);
-            } else {
-                level.setBlock(getLinkedBlock(pos, level), (BlockState) blockState.setValue(POWERED, true), 2);
-                level.scheduleTick(getLinkedBlock(pos, level), this, 2);
-            }
+    public void tick(BlockState blockState, @NotNull ServerLevel level, @NotNull BlockPos pos, RandomSource randomSource) {
+        if (level.getBlockEntity(pos) == null) {
+            return;
+        } // Quick and dirty fix for this
 
-            this.updateNeighborsInFront(level, pos, blockState);
+        if ((Boolean) blockState.getValue(POWERED)) {
+            level.setBlock(getLinkedBlock(pos, level), (BlockState) blockState.setValue(POWERED, false), 2);
+        } else {
+            level.setBlock(getLinkedBlock(pos, level), (BlockState) blockState.setValue(POWERED, true), 2);
+            level.scheduleTick(getLinkedBlock(pos, level), this, 2);
         }
+        this.updateNeighborsInFront(level, pos, blockState);
     }
 
-    @Override
     public BlockPos getLinkedBlock(BlockPos pos, Level level) {
-        CompoundTag tag = level.getBlockEntity(pos).serializeNBT();
+        CompoundTag tag = level.getBlockEntity(pos).saveWithoutMetadata();
         return BlockPos.of(tag.getLong("selectedBlock"));
     }
 
-    @Override
     public void setLinkedBlock(BlockPos pos, Level level, CompoundTag tag) {
-        level.getBlockEntity(pos).deserializeNBT(tag);
+        level.getBlockEntity(pos).load(tag);
     }
+
+
 }
