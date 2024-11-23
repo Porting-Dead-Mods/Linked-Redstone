@@ -28,22 +28,13 @@ import org.slf4j.Logger;
 @Mod(LinkedRedstone.MODID)
 public class LinkedRedstone {
     public static final String MODID = "linkedredstone";
-    private static final Logger LOGGER = LogUtils.getLogger();
-
-
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-
-    public static final RegistryObject<CreativeModeTab> LINKED_REDSTONE_TAB = CREATIVE_MODE_TABS.register("linked_redstone_tab", () -> CreativeModeTab.builder().withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> EXAMPLE_ITEM.get().getDefaultInstance()).displayItems((parameters, output) -> {
-        output.accept(EXAMPLE_ITEM.get());
-    }).build());
+    public static final Logger LRLOGGER = LogUtils.getLogger();
 
     public LinkedRedstone() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        LRBlocks.BLOCKS.register(modEventBus);
         LRItems.ITEMS.register(modEventBus);
-        CREATIVE_MODE_TABS.register(modEventBus);
+        LRBlocks.BLOCKS.register(modEventBus);
+        LRItems.CREATIVE_MODE_TABS.register(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, LRConfig.SPEC);
