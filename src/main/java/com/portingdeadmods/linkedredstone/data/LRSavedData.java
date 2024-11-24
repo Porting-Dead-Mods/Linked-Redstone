@@ -2,6 +2,7 @@ package com.portingdeadmods.linkedredstone.data;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
+import com.portingdeadmods.linkedredstone.LRConfig;
 import com.portingdeadmods.linkedredstone.LinkedRedstone;
 import com.portingdeadmods.linkedredstone.data.helper.LRChunkMap;
 import com.portingdeadmods.linkedredstone.data.helper.LRLevelMap;
@@ -26,7 +27,7 @@ import java.util.Optional;
  * {@link LRChunkMap} maps individual {@link BlockPos}itions to their respective {@link BlockPos}
  */
 public class LRSavedData extends SavedData {
-    public static final String ID = "cable_facades_saved_data";
+    public static final String ID = "linked_redstone_saved_data";
 
     private final LRLevelMap levelMap;
 
@@ -41,9 +42,12 @@ public class LRSavedData extends SavedData {
         return this.levelMap;
     }
 
-    public @NotNull LRChunkMap getOrCreateFacadeMapForChunk(ChunkPos chunkPos) {
+    public @NotNull LRChunkMap getOrCreateLRChunkMapForChunkPos(ChunkPos chunkPos) {
         LRChunkMap map = getLRChunkMapForChunkPos(chunkPos);
         if (map == null) {
+            if (LRConfig.verboseDebug) {
+                LinkedRedstone.LRLOGGER.debug("Creating new LRChunkMap for chunk {}, {}", chunkPos.getRegionX(), chunkPos.getRegionZ());
+            }
             map = new LRChunkMap();
             this.levelMap.getLRChunkMaps().put(chunkPos, map);
             setDirty();
@@ -57,7 +61,7 @@ public class LRSavedData extends SavedData {
 
     public @NotNull LRChunkMap getOrCreateLRChunkMapForPos(BlockPos blockPos) {
         ChunkPos chunkPos = new ChunkPos(blockPos);
-        return getOrCreateFacadeMapForChunk(chunkPos);
+        return getOrCreateLRChunkMapForChunkPos(chunkPos);
     }
 
     public @Nullable LRChunkMap getLRChunkMapForBlockPos(BlockPos blockPos) {
@@ -80,9 +84,9 @@ public class LRSavedData extends SavedData {
     }
 
     public @Nullable BlockPos getLinkedBlock(BlockPos blockPos) {
-        LRChunkMap facadeMapForPos = getLRChunkMapForBlockPos(blockPos);
-        if (facadeMapForPos != null) {
-            return facadeMapForPos.getChunkMap().get(blockPos);
+        LRChunkMap LRChunkMapForBlockPos = getLRChunkMapForBlockPos(blockPos);
+        if (LRChunkMapForBlockPos != null) {
+            return LRChunkMapForBlockPos.getChunkMap().get(blockPos);
         }
         return null;
     }
@@ -101,8 +105,8 @@ public class LRSavedData extends SavedData {
         Optional<Pair<LRLevelMap, Tag>> mapTagPair = dataResult
                 .resultOrPartial(err -> LinkedRedstone.LRLOGGER.error("Decoding error: {}", err));
         if (mapTagPair.isPresent()) {
-            LRLevelMap facadeMap = mapTagPair.get().getFirst();
-            return new LRSavedData(facadeMap);
+            LRLevelMap lrLevelMap = mapTagPair.get().getFirst();
+            return new LRSavedData(lrLevelMap);
         }
         return new LRSavedData();
     }
