@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This saved data saves all facades based on chunks.
@@ -75,6 +76,7 @@ public class LRSavedData extends SavedData {
     }
 
     public void removeLinkedPair(BlockPos blockPos) {
+        if (LRConfig.verboseDebug) LinkedRedstone.LRLOGGER.debug("Removing linked pair for Linked Redstone Component -> {} {} {}", blockPos.getX(), blockPos.getY(), blockPos.getZ());
         getOrCreateLRChunkMapForPos(blockPos).getChunkMap().remove(blockPos);
         setDirty();
     }
@@ -93,10 +95,21 @@ public class LRSavedData extends SavedData {
 
     @Override
     public @NotNull CompoundTag save(CompoundTag compoundTag) {
+        AtomicBoolean errored = new AtomicBoolean(false);
         DataResult<Tag> tagDataResult = LRLevelMap.CODEC.encodeStart(NbtOps.INSTANCE, this.levelMap);
         tagDataResult
-                .resultOrPartial(err -> LinkedRedstone.LRLOGGER.error("Encoding error: {}", err))
+                .resultOrPartial(err -> {
+                    LinkedRedstone.LRLOGGER.error("Encoding error: {}", err);
+                    errored.set(true);
+                })
                 .ifPresent(tag -> compoundTag.put(ID, tag));
+        if (LRConfig.verboseDebug) {
+            if (errored.get()) {
+                LinkedRedstone.LRLOGGER.debug("Failed to save LRLevelMap to saved data, read error above.");
+            } else {
+                LinkedRedstone.LRLOGGER.debug("Successfully saved LRLevelMap to saved data");
+            }
+        }
         return compoundTag;
     }
 
@@ -106,12 +119,31 @@ public class LRSavedData extends SavedData {
                 .resultOrPartial(err -> LinkedRedstone.LRLOGGER.error("Decoding error: {}", err));
         if (mapTagPair.isPresent()) {
             LRLevelMap lrLevelMap = mapTagPair.get().getFirst();
+            if (LRConfig.verboseDebug) {
+                LinkedRedstone.LRLOGGER.debug("Successfully loaded LRLevelMap from saved data");
+            }
             return new LRSavedData(lrLevelMap);
+        }
+        if (LRConfig.verboseDebug) {
+            LinkedRedstone.LRLOGGER.debug("No LRLevelMap found in saved data, creating new one");
         }
         return new LRSavedData();
     }
 
     public static LRSavedData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(compoundTag -> load(compoundTag, level), LRSavedData::new, ID);
+        LRSavedData data = level.getDataStorage().computeIfAbsent(compoundTag -> load(compoundTag, level), LRSavedData::new, ID);
+
+        if (LRConfig.verboseDebug) {
+            LinkedRedstone.LRLOGGER.debug("Fetched LRSavedData for level {}", level.dimension().location().getPath());
+            for (ChunkPos chunkpos : data.levelMap.getLRChunkMaps().keySet()) {
+                LinkedRedstone.LRLOGGER.debug("Dimension {} - Chunk: {}, {}", level.dimensionTypeId().toString(), chunkpos.getRegionX(), chunkpos.getRegionZ());
+                LRChunkMap chunkMap = data.levelMap.getLRChunkMaps().get(chunkpos);
+                for (BlockPos src : chunkMap.getChunkMap().keySet()) {
+                    BlockPos sb = chunkMap.getChunkMap().get(src);
+                    LinkedRedstone.LRLOGGER.debug("Linked block at {} -> {}", src, sb);
+                }
+            }
+        }
+        return data;
     }
 }
