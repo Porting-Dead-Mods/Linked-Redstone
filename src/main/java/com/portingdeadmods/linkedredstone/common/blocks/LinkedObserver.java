@@ -1,5 +1,6 @@
 package com.portingdeadmods.linkedredstone.common.blocks;
 
+import com.portingdeadmods.linkedredstone.LRConfig;
 import com.portingdeadmods.linkedredstone.LinkedRedstone;
 import com.portingdeadmods.linkedredstone.api.ILinkable;
 import com.portingdeadmods.linkedredstone.utils.LRUtil;
@@ -28,9 +29,10 @@ public class LinkedObserver extends ObserverBlock implements ILinkable {
         if (pState.getValue(POWERED)) {
             pLevel.setBlock(pPos, pState.setValue(POWERED, Boolean.valueOf(false)), 2);
             if (LRUtil.hasPair(sb, pLevel)) {
+                if (LRConfig.verboseDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " tried to power " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ());
                 pLevel.setBlock(sb, pLevel.getBlockState(sb).setValue(POWERED, Boolean.valueOf(false)), 2);
-            } else {
-                LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " would power but has no linked block");
+            } else  {
+                if (LRConfig.verboseDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " would power but has no linked block");
             }
         } else {
             pLevel.setBlock(pPos, pState.setValue(POWERED, Boolean.valueOf(true)), 2);
@@ -56,9 +58,7 @@ public class LinkedObserver extends ObserverBlock implements ILinkable {
             if (!pLevel.isClientSide && pState.getValue(POWERED) && pLevel.getBlockTicks().hasScheduledTick(pPos, this)) {
                 this.updateNeighborsInFront(pLevel, pPos, pState.setValue(POWERED, Boolean.valueOf(false)));
             }
-
         }
-        LRUtil.unpair(pPos, pLevel);
     }
 
     public BlockPos getLinkedBlock(BlockPos pos, Level level) {
