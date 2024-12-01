@@ -46,7 +46,7 @@ public class LRSavedData extends SavedData {
     public @NotNull LRChunkMap getOrCreateLRChunkMapForChunkPos(ChunkPos chunkPos) {
         LRChunkMap map = getLRChunkMapForChunkPos(chunkPos);
         if (map == null) {
-            if (LRConfig.verboseDebug) {
+            if (LRConfig.verboseDebug || LRConfig.fullDebug) {
                 LinkedRedstone.LRLOGGER.debug("Creating new LRChunkMap for chunk {}, {}", chunkPos.getRegionX(), chunkPos.getRegionZ());
             }
             map = new LRChunkMap();
@@ -76,7 +76,7 @@ public class LRSavedData extends SavedData {
     }
 
     public void removeLinkedPair(BlockPos blockPos) {
-        if (LRConfig.verboseDebug) LinkedRedstone.LRLOGGER.debug("Removing linked pair for Linked Redstone Component -> {} {} {}", blockPos.getX(), blockPos.getY(), blockPos.getZ());
+        if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.debug("Removing linked pair for Linked Redstone Component -> {} {} {}", blockPos.getX(), blockPos.getY(), blockPos.getZ());
         getOrCreateLRChunkMapForPos(blockPos).getChunkMap().remove(blockPos);
         setDirty();
     }
@@ -88,8 +88,28 @@ public class LRSavedData extends SavedData {
     public @Nullable BlockPos getLinkedBlock(BlockPos blockPos) {
         LRChunkMap LRChunkMapForBlockPos = getLRChunkMapForBlockPos(blockPos);
         if (LRChunkMapForBlockPos != null) {
+            if (LRConfig.verboseDebug || LRConfig.fullDebug) {
+                boolean hasPair = false;
+                ChunkPos chunkPos = new ChunkPos(blockPos);
+                LinkedRedstone.LRLOGGER.debug("Fetched ChunkMap for block at {} {} {} - Chunk {} {}", blockPos.getX(), blockPos.getY(), blockPos.getZ(), chunkPos.getRegionX(), chunkPos.getRegionZ());
+                LinkedRedstone.LRLOGGER.debug("Chunk {} {} has pairs:", chunkPos.getRegionX(), chunkPos.getRegionZ());
+                for (BlockPos src : LRChunkMapForBlockPos.getChunkMap().keySet()) {
+                    BlockPos sb = LRChunkMapForBlockPos.getChunkMap().get(src);
+                    LinkedRedstone.LRLOGGER.debug("Linked block at {} -> {}", src, sb);
+                    if (src.equals(blockPos)) {
+                        hasPair = true;
+                    }
+                }
+                LinkedRedstone.LRLOGGER.debug("Supplied blockPos: {}", blockPos);
+                if (hasPair) {
+                    LinkedRedstone.LRLOGGER.debug("Supplied redstone component has a pair, is something broken?");
+                }
+            }
+
             return LRChunkMapForBlockPos.getChunkMap().get(blockPos);
         }
+        if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.error("Fetched ChunkMap for block at {} {} {} returned null?", blockPos.getX(), blockPos.getY(), blockPos.getZ());
+
         return null;
     }
 
@@ -103,7 +123,7 @@ public class LRSavedData extends SavedData {
                     errored.set(true);
                 })
                 .ifPresent(tag -> compoundTag.put(ID, tag));
-        if (LRConfig.verboseDebug) {
+        if (LRConfig.verboseDebug || LRConfig.fullDebug) {
             if (errored.get()) {
                 LinkedRedstone.LRLOGGER.debug("Failed to save LRLevelMap to saved data, read error above.");
             } else {
@@ -119,12 +139,12 @@ public class LRSavedData extends SavedData {
                 .resultOrPartial(err -> LinkedRedstone.LRLOGGER.error("Decoding error: {}", err));
         if (mapTagPair.isPresent()) {
             LRLevelMap lrLevelMap = mapTagPair.get().getFirst();
-            if (LRConfig.verboseDebug) {
+            if (LRConfig.verboseDebug || LRConfig.fullDebug) {
                 LinkedRedstone.LRLOGGER.debug("Successfully loaded LRLevelMap from saved data");
             }
             return new LRSavedData(lrLevelMap);
         }
-        if (LRConfig.verboseDebug) {
+        if (LRConfig.verboseDebug || LRConfig.fullDebug) {
             LinkedRedstone.LRLOGGER.debug("No LRLevelMap found in saved data, creating new one");
         }
         return new LRSavedData();
@@ -133,7 +153,9 @@ public class LRSavedData extends SavedData {
     public static LRSavedData get(ServerLevel level) {
         LRSavedData data = level.getDataStorage().computeIfAbsent(compoundTag -> load(compoundTag, level), LRSavedData::new, ID);
 
-        if (LRConfig.verboseDebug) {
+        if (LRConfig.fullDebug) {
+
+            LinkedRedstone.LRLOGGER.debug("----- START OF LRSavedData DUMP -----");
             LinkedRedstone.LRLOGGER.debug("Fetched LRSavedData for level {}", level.dimension().location().getPath());
             for (ChunkPos chunkpos : data.levelMap.getLRChunkMaps().keySet()) {
                 LinkedRedstone.LRLOGGER.debug("Dimension {} - Chunk: {}, {}", level.dimensionTypeId().toString(), chunkpos.getRegionX(), chunkpos.getRegionZ());
@@ -143,6 +165,7 @@ public class LRSavedData extends SavedData {
                     LinkedRedstone.LRLOGGER.debug("Linked block at {} -> {}", src, sb);
                 }
             }
+            LinkedRedstone.LRLOGGER.debug("------ END OF LRSavedData DUMP ------");
         }
         return data;
     }

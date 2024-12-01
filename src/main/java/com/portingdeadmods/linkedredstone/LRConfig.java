@@ -14,12 +14,18 @@ public class LRConfig {
             .comment("Enable verbose debug logging")
             .define("verboseDebug", false);
 
+    public static final ForgeConfigSpec.BooleanValue FULL_DEBUG = BUILDER
+            .comment("Enable full debug logging, this *will* spam your console. This overrides VERBOSE_DEBUG.")
+            .define("fullDebug", false);
+
     public static boolean verboseDebug;
+    public static boolean fullDebug;
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         verboseDebug = VERBOSE_DEBUG.get();
+        fullDebug = FULL_DEBUG.get();
     }
 }

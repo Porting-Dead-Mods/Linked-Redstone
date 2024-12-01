@@ -45,7 +45,7 @@ public class LRChunkMap {
                     BlockPos srcBP = BlockPos.of(Long.parseLong(srcStr));
                     BlockPos sbBP = BlockPos.of(sbLong);
 
-                    if (LRConfig.verboseDebug) {
+                    if (LRConfig.verboseDebug || LRConfig.verboseDebug) {
                         LinkedRedstone.LRLOGGER.debug("-Converting String/Long -> BP/BP-");
                         LinkedRedstone.LRLOGGER.debug("Converted src: {} -> {} {} {}", srcStr, srcBP.getX(), srcBP.getY(), srcBP.getZ());
                         LinkedRedstone.LRLOGGER.debug("Converted sb: {} -> {} {} {}", sbLong, sbBP.getX(), sbBP.getY(), sbBP.getZ());
@@ -65,7 +65,7 @@ public class LRChunkMap {
                     String srcStr = String.valueOf(srcBP.asLong());
                     Long sbLong = sbBP.asLong();
 
-                    if (LRConfig.verboseDebug) {
+                    if (LRConfig.verboseDebug || LRConfig.fullDebug) {
                         LinkedRedstone.LRLOGGER.debug("-Converting BP/BP to String/Long-");
                         LinkedRedstone.LRLOGGER.debug("Converted src: {} {} {} -> {}", srcBP.getX(), srcBP.getY(), srcBP.getZ(), srcStr);
                         LinkedRedstone.LRLOGGER.debug("Converted sb: {} {} {} -> {}", sbBP.getX(), sbBP.getY(), sbBP.getZ(), sbLong);
