@@ -15,7 +15,7 @@ public class LRConfig {
             .define("verboseDebug", false);
 
     public static final ForgeConfigSpec.BooleanValue FULL_DEBUG = BUILDER
-            .comment("Enable full debug logging, this *will* spam your console. This overrides VERBOSE_DEBUG.")
+            .comment("Enable full debug logging, this *will* spam your console. This overrides verboseDebug.")
             .define("fullDebug", false);
 
     public static boolean verboseDebug;

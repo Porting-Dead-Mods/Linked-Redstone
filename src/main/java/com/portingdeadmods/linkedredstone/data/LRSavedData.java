@@ -70,8 +70,8 @@ public class LRSavedData extends SavedData {
         return getLRChunkMapForChunkPos(chunkPos);
     }
 
-    public void addLinkedPair(BlockPos blockPos, BlockPos blockPos2) {
-        getOrCreateLRChunkMapForPos(blockPos).getChunkMap().put(blockPos, blockPos2);
+    public void addLinkedPair(BlockPos src, BlockPos sb) {
+        getOrCreateLRChunkMapForPos(src).getChunkMap().put(src, sb);
         setDirty();
     }
 
