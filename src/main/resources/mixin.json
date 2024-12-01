@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.portingdeadmods.linkedredstone.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "SignalGetterMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

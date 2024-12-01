@@ -53,7 +53,7 @@ public class LinkingTool extends Item {
 
                 LRUtil.pair(src, sb, level);
                 if (player != null) player.sendSystemMessage(
-                        Component.literal("Linked " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ() + " to " + src.getX() + ", " + src.getY() + ", " + src.getZ()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
+                        Component.literal("Linked " + src.getX() + ", " + src.getY() + ", " + src.getZ() + " to " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                 );
 
                 itemstack.removeTagKey("selectedBlock");

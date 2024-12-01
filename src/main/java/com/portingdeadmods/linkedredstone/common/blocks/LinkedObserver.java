@@ -28,28 +28,20 @@ public class LinkedObserver extends ObserverBlock implements ILinkable {
         BlockPos sb = getLinkedBlock(pPos, pLevel);
         if (pState.getValue(POWERED)) {
             pLevel.setBlock(pPos, pState.setValue(POWERED, Boolean.valueOf(false)), 2);
-            if (LRUtil.hasPair(sb, pLevel)) {
+
+            if (LRUtil.hasPair(pPos, pLevel)) {
                 if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " tried to power " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ());
-                pLevel.setBlock(sb, pLevel.getBlockState(sb).setValue(POWERED, Boolean.valueOf(false)), 2);
+                LRUtil.powerAndUpdate(sb, pLevel);
             } else  {
                 if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " would power but has no linked block");
             }
+
         } else {
             pLevel.setBlock(pPos, pState.setValue(POWERED, Boolean.valueOf(true)), 2);
             pLevel.scheduleTick(pPos, this, 2);
         }
 
         this.updateNeighborsInFront(pLevel, pPos, pState);
-    }
-
-    @Override
-    public int getSignal(BlockState pBlockState, BlockGetter pBlockAccess, BlockPos pPos, Direction pSide) {
-        BlockPos linkedBlockPos = getLinkedBlock(pPos, (Level) pBlockAccess);
-        if (linkedBlockPos != null) {
-            BlockState linkedBlockState = pBlockAccess.getBlockState(linkedBlockPos);
-            return linkedBlockState.getValue(POWERED) && linkedBlockState.getValue(FACING) == pSide ? 15 : 0;
-        }
-        return 0;
     }
 
     @Override
