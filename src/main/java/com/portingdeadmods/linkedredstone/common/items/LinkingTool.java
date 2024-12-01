@@ -2,6 +2,7 @@ package com.portingdeadmods.linkedredstone.common.items;
 
 import com.portingdeadmods.linkedredstone.utils.LRUtil;
 import com.portingdeadmods.linkedredstone.api.ILinkable;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -35,12 +36,12 @@ public class LinkingTool extends Item {
             if (level.getBlockState(pos).getBlock() instanceof ILinkable) {
                 tag.putLong("selectedRedstoneComponent", pos.asLong());
                 if (player != null) player.sendSystemMessage(
-                        Component.nullToEmpty("Selected redstone component: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + " - " + level.getBlockState(pos).getBlock().getName().getString())
+                        Component.literal("Selected redstone component: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + " - " + level.getBlockState(pos).getBlock().getName().getString()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                 );
             } else {
                 tag.putLong("selectedBlock", pos.asLong());
                 if (player != null) player.sendSystemMessage(
-                        Component.nullToEmpty("Selected block: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + " - " + level.getBlockState(pos).getBlock().getName().getString())
+                        Component.literal("Selected block: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + " - " + level.getBlockState(pos).getBlock().getName().getString()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                 );
             }
 
@@ -52,7 +53,7 @@ public class LinkingTool extends Item {
 
                 LRUtil.pair(src, sb, level);
                 if (player != null) player.sendSystemMessage(
-                        Component.nullToEmpty("Linked " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ() + " to " + src.getX() + ", " + src.getY() + ", " + src.getZ())
+                        Component.literal("Linked " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ() + " to " + src.getX() + ", " + src.getY() + ", " + src.getZ()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
                 );
 
                 itemstack.removeTagKey("selectedBlock");
@@ -68,11 +69,11 @@ public class LinkingTool extends Item {
         BlockPos src = getSelectedRedstoneComponent(stack);
 
         if (src != null) {
-            components.add(Component.nullToEmpty("Selected redstoneComponent: " + src.getX() + ", " + src.getY() + ", " + src.getZ() + " (" + level.getBlockState(src).getBlock().getName().getString() + ")"));
+            components.add(Component.literal("Selected redstoneComponent: " + src.getX() + ", " + src.getY() + ", " + src.getZ() + " (" + level.getBlockState(src).getBlock().getName().getString() + ")").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
 
         if (sb != null) {
-            components.add(Component.nullToEmpty("Selected block: " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ() + " (" + level.getBlockState(sb).getBlock().getName().getString() + ")"));
+            components.add(Component.literal("Selected block: " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ() + " (" + level.getBlockState(sb).getBlock().getName().getString() + ")").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
         }
     }
 
