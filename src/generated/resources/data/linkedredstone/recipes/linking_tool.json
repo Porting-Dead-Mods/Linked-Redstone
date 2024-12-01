@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "E": {
+      "item": "linkedredstone:eye_of_redstone"
+    }
+  },
+  "pattern": [
+    "  E",
+    " C ",
+    "C  "
+  ],
+  "result": {
+    "item": "linkedredstone:linking_tool"
+  },
+  "show_notification": true
+}

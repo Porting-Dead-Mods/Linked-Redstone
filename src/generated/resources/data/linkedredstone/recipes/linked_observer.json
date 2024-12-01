@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "minecraft:observer"
+    },
+    {
+      "item": "linkedredstone:eye_of_redstone"
+    }
+  ],
+  "result": {
+    "item": "linkedredstone:linked_observer"
+  }
+}

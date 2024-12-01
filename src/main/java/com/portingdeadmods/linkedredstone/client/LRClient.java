@@ -1,4 +1,4 @@
-package com.portingdeadmods.linkedredstone;
+package com.portingdeadmods.linkedredstone.client;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
