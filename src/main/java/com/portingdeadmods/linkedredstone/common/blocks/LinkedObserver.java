@@ -29,10 +29,10 @@ public class LinkedObserver extends ObserverBlock implements ILinkable {
         if (pState.getValue(POWERED)) {
             pLevel.setBlock(pPos, pState.setValue(POWERED, Boolean.valueOf(false)), 2);
             if (LRUtil.hasPair(sb, pLevel)) {
-                if (LRConfig.verboseDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " tried to power " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ());
+                if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " tried to power " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ());
                 pLevel.setBlock(sb, pLevel.getBlockState(sb).setValue(POWERED, Boolean.valueOf(false)), 2);
             } else  {
-                if (LRConfig.verboseDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " would power but has no linked block");
+                if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " would power but has no linked block");
             }
         } else {
             pLevel.setBlock(pPos, pState.setValue(POWERED, Boolean.valueOf(true)), 2);

@@ -1,5 +1,6 @@
 package com.portingdeadmods.linkedredstone.utils;
 
+import com.portingdeadmods.linkedredstone.LinkedRedstone;
 import com.portingdeadmods.linkedredstone.data.LRSavedData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -9,9 +10,11 @@ public final class LRUtil {
     public static BlockPos getPair(BlockPos pos, Level level) {
         if (level instanceof ServerLevel serverLevel) {
             return LRSavedData.get(serverLevel).getLinkedBlock(pos);
+        } else {
+            return null;
         }
         //TODO: Implement networking with client rendering
-        else return null;
+
     }
 
     public static boolean hasPair(BlockPos pos, Level level) {
