@@ -6,6 +6,7 @@ import com.portingdeadmods.linkedredstone.LRConfig;
 import com.portingdeadmods.linkedredstone.LinkedRedstone;
 import com.portingdeadmods.linkedredstone.data.helper.LRChunkMap;
 import com.portingdeadmods.linkedredstone.data.helper.LRLevelMap;
+import com.portingdeadmods.linkedredstone.utils.LRUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -20,7 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * This saved data saves all facades based on chunks.
+ * This saved data saves all linked block pairs based on chunks.
  * In future versions this system will be replaced with chunk data attachments.
  * <br>
  * Internally it uses a hashmap that maps {@link ChunkPos} to {@link LRChunkMap}
@@ -35,6 +36,7 @@ public class LRSavedData extends SavedData {
     public LRSavedData(LRLevelMap plevelMap) {
         this.levelMap = plevelMap;
     }
+
     public LRSavedData() {
         this(new LRLevelMap());
     }
@@ -46,9 +48,11 @@ public class LRSavedData extends SavedData {
     public @NotNull LRChunkMap getOrCreateLRChunkMapForChunkPos(ChunkPos chunkPos) {
         LRChunkMap map = getLRChunkMapForChunkPos(chunkPos);
         if (map == null) {
+
             if (LRConfig.verboseDebug || LRConfig.fullDebug) {
                 LinkedRedstone.LRLOGGER.debug("Creating new LRChunkMap for chunk {}, {}", chunkPos.getRegionX(), chunkPos.getRegionZ());
             }
+
             map = new LRChunkMap();
             this.levelMap.getLRChunkMaps().put(chunkPos, map);
             setDirty();
@@ -108,6 +112,7 @@ public class LRSavedData extends SavedData {
 
             return LRChunkMapForBlockPos.getChunkMap().get(blockPos);
         }
+
         if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.error("Fetched ChunkMap for block at {} {} {} returned null?", blockPos.getX(), blockPos.getY(), blockPos.getZ());
 
         return null;
@@ -123,6 +128,7 @@ public class LRSavedData extends SavedData {
                     errored.set(true);
                 })
                 .ifPresent(tag -> compoundTag.put(ID, tag));
+
         if (LRConfig.verboseDebug || LRConfig.fullDebug) {
             if (errored.get()) {
                 LinkedRedstone.LRLOGGER.debug("Failed to save LRLevelMap to saved data, read error above.");
@@ -130,6 +136,7 @@ public class LRSavedData extends SavedData {
                 LinkedRedstone.LRLOGGER.debug("Successfully saved LRLevelMap to saved data");
             }
         }
+
         return compoundTag;
     }
 
@@ -144,9 +151,11 @@ public class LRSavedData extends SavedData {
             }
             return new LRSavedData(lrLevelMap);
         }
+
         if (LRConfig.verboseDebug || LRConfig.fullDebug) {
             LinkedRedstone.LRLOGGER.debug("No LRLevelMap found in saved data, creating new one");
         }
+
         return new LRSavedData();
     }
 
@@ -167,6 +176,7 @@ public class LRSavedData extends SavedData {
             }
             LinkedRedstone.LRLOGGER.debug("------ END OF LRSavedData DUMP ------");
         }
+
         return data;
     }
 }

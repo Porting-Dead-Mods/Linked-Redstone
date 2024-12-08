@@ -5,17 +5,11 @@ import com.portingdeadmods.linkedredstone.LinkedRedstone;
 import com.portingdeadmods.linkedredstone.api.ILinkable;
 import com.portingdeadmods.linkedredstone.utils.LRUtil;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ObserverBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class LinkedObserver extends ObserverBlock implements ILinkable {
     public LinkedObserver(Properties properties) {
@@ -29,7 +23,7 @@ public class LinkedObserver extends ObserverBlock implements ILinkable {
         if (pState.getValue(POWERED)) {
             pLevel.setBlock(pPos, pState.setValue(POWERED, Boolean.valueOf(false)), 2);
 
-            if (LRUtil.hasPair(pPos, pLevel)) {
+            if (LRUtil.hasSB(pPos, pLevel)) {
                 if (LRConfig.verboseDebug || LRConfig.fullDebug) LinkedRedstone.LRLOGGER.debug("LinkedObserver at " + pPos.getX() + ", " + pPos.getY() + ", " + pPos.getZ() + " tried to power " + sb.getX() + ", " + sb.getY() + ", " + sb.getZ());
                 LRUtil.powerAndUpdate(sb, pLevel);
             } else  {
