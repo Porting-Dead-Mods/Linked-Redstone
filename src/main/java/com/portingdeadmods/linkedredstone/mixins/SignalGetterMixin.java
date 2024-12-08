@@ -11,9 +11,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SignalGetter.class)
-public interface SignalGetterMixin extends SignalGetter {
+public abstract class SignalGetterMixin {
     @Inject(method = "getSignal", at = @At("HEAD"), cancellable = true)
     private void getSignal(BlockPos pPos, Direction pDirection, CallbackInfoReturnable<Integer> cir) {
+        System.out.println("getSignal is called");
         if (LRUtil.hasSRC(pPos, (Level) this)) {
             if (LRUtil.isPowered(LRUtil.getSRC(pPos, (Level) this), (Level) this)) {
                 cir.setReturnValue(15);
